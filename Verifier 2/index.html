@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Drug Verifier</title>
+  <script src="https://cdn.jsdelivr.net/npm/react@18/umd/react.development.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/react-dom@18/umd/react-dom.development.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@babel/standalone@7/babel.min.js"></script>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 font-sans">
+  <div id="root" class="container mx-auto p-4"></div>
+
+  <script type="text/babel">
+    const sampleDrugs = [
+      { id: 1, brand_name: "Lipitor", generic_name: "Atorvastatin", indications: "Used to lower cholesterol and triglycerides in the blood.", dosage: "10-80 mg once daily", side_effects: "Muscle pain, liver damage", interactions: "Warfarin, Clarithromycin" },
+      { id: 2, brand_name: "Ventolin", generic_name: "Albuterol", indications: "Treats asthma and chronic obstructive pulmonary disease.", dosage: "2 puffs every 4-6 hours as needed", side_effects: "Tremors, headache", interactions: "Beta-blockers" },
+      { id: 3, brand_name: "Synthroid", generic_name: "Levothyroxine", indications: "Treats hypothyroidism and replaces thyroid hormone.", dosage: "25-200 mcg once daily", side_effects: "Palpitations, insomnia", interactions: "Calcium supplements, Warfarin" },
+      { id: 4, brand_name: "Zoloft", generic_name: "Sertraline", indications: "Treats depression, anxiety disorders, OCD, and PTSD.", dosage: "50-200 mg once daily", side_effects: "Nausea, sexual dysfunction", interactions: "MAOIs, NSAIDs" },
+      { id: 5, brand_name: "Norvasc", generic_name: "Amlodipine", indications: "Treats hypertension and chest pain (angina).", dosage: "2.5-10 mg once daily", side_effects: "Swelling, dizziness", interactions: "Ketoconazole, Beta-blockers" },
+      { id: 6, brand_name: "Advair", generic_name: "Fluticasone/Salmeterol", indications: "Treats asthma and chronic obstructive pulmonary disease.", dosage: "1 inhalation twice daily", side_effects: "Throat irritation, thrush", interactions: "Beta-blockers, Ketoconazole" },
+      { id: 7, brand_name: "Glucophage", generic_name: "Metformin", indications: "Manages type 2 diabetes.", dosage: "500-2000 mg daily", side_effects笔者: "Nausea, diarrhea", interactions: "Alcohol, Iodinated contrast" },
+      { id: 8, brand_name: "Prilosec", generic_name: "Omeprazole", indications: "Treats GERD, peptic ulcers, and H. pylori infection.", dosage: "20-40 mg once daily", side_effects: "Headache, diarrhea", interactions: "Clopidogrel, Warfarin" },
+      { id: 9, brand_name: "Xarelto", generic_name: "Rivaroxaban", indications: "Prevents and treats blood clots; reduces stroke risk in atrial fibrillation.", dosage: "10-20 mg once daily", side_effects: "Bleeding, bruising", interactions: "NSAIDs, Rifampin" },
+      { id: 10, brand_name: "Lyrica", generic_name: "Pregabalin", indications: "Treats neuropathic pain, fibromyalgia, and seizures.", dosage: "150-600 mg daily", side_effects: "Dizziness, drowsiness", interactions: "Opioids, ACE inhibitors" },
+      { id: 11, brand_name: "Eliquis", generic_name: "Apixaban", indications: "Prevents stroke in atrial fibrillation; treats DVT/PE.", dosage: "2.5-5 mg twice daily", side_effects: "Bleeding, anemia", interactions: "NSAIDs, Ketoconazole" },
+      { id: 12, brand_name: "Piriton", generic_name: "Chlorphenamine (Chlorpheniramine)", indications: "Allergic conditions (e.g., hay fever, urticaria, allergic rhinitis).", dosage: "4 mg every 4–6 hours (max 24 mg/day)", side_effects: "Drowsiness, dry mouth, dizziness, blurred vision", interactions: "Alcohol, Sedatives, MAOIs" },
+      { id: 13, brand_name: "Januvia", generic_name: "Sitagliptin", indications: "Manages type 2 diabetes.", dosage: "100 mg once daily", side_effects: "Headache, sore throat", interactions: "Insulin, Digoxin" },
+      { id: 14, brand_name: "Crestor", generic_name: "Rosuvastatin", indications: "Lowers cholesterol and reduces cardiovascular risk.", dosage: "5-40 mg once daily", side_effects: "Muscle pain, headache", interactions: "Cyclosporine, Gemfibrozil" },
+      { id: 15, brand_name: "Nexium", generic_name: "Esomeprazole", indications: "Treats GERD, H. pylori infection, and NSAID-induced ulcers.", dosage: "20-40 mg once daily", side_effects: "Headache, abdominal pain", interactions: "Clopidogrel, Diazepam" },
+      { id: 16, brand_name: "Excedrin Migraine", generic_name: "Acetaminophen/Aspirin/Caffeine", indications: "Treats migraine and tension-type headaches.", dosage: "2 tablets every 6 hours; max 4 tablets/24 hours", side_effects: "Stomach upset, nervousness", interactions: "Warfarin, SSRIs" },
+      { id: 17, brand_name: "Imitrex", generic_name: "Sumatriptan", indications: "Treats acute migraine with or without aura.", dosage: "25-100 mg at onset; max 200 mg/24 hours", side_effects: "Tingling, dizziness", interactions: "MAOIs, SSRIs" },
+      { id: 18, brand_name: "Advil", generic_name: "Ibuprofen", indications: "Treats tension headache, migraine, and general pain.", dosage: "200-400 mg every 4-6 hours; max 3200 mg/24 hours", side_effects: "Stomach pain, nausea", interactions: "Aspirin, Warfarin" },
+      { id: 19, brand_name: "Maxalt", generic_name: "Rizatriptan", indications: "Treats acute migraine with or without aura.", dosage: "5-10 mg at onset; max 30 mg/24 hours", side_effects: "Dizziness, fatigue", interactions: "MAOIs, Propranolol" },
+      { id: 20, brand_name: "Topamax", generic_name: "Topiramate", indications: "Prevents migraines and treats seizures.", dosage: "25-200 mg daily", side_effects: "Cognitive impairment, tingling", interactions: "Oral contraceptives, Carbamazepine" },
+      { id: 21, brand_name: "Advil", generic_name: "Ibuprofen", indications: "Pain, inflammation, fever.", dosage: "200–800 mg every 4–6 hours (max 3,200 mg/day)", side_effects: "GI bleeding, kidney injury, hypertension", interactions: "Aspirin, Warfarin, Corticosteroids" },
+      { id: 22, brand_name: "Zoloft", generic_name: "Sertraline", indications: "Depression, OCD, PTSD.", dosage: "50–200 mg once daily", side_effects: "Nausea, insomnia, sexual dysfunction", interactions: "MAOIs, NSAIDs, Tramadol" },
+      { id: 23, brand_name: "Synthroid", generic_name: "Levothyroxine", indications: "Hypothyroidism.", dosage: "25–200 mcg once daily", side_effects: "Arrhythmia, weight loss, osteoporosis", interactions: "Calcium supplements, Iron, PPIs" },
+      { id: 24, brand_name: "Norvasc", generic_name: "Amlodipine", indications: "Hypertension, angina.", dosage: "2.5–10 mg once daily", side_effects: "Peripheral edema, dizziness, flushing", interactions: "Simvastatin, Grapefruit juice" },
+      { id: 25, brand_name: "Coumadin", generic_name: "Warfarin", indications: "Blood clot prevention.", dosage: "2–10 mg daily (adjusted via INR)", side_effects: "Bleeding, necrosis, hair loss", interactions: "Vitamin K-rich foods, Antibiotics, NSAIDs" },
+      { id: 26, brand_name: "Nexium", generic_name: "Esomeprazole", indications: "GERD, peptic ulcers.", dosage: "20–40 mg once daily", side_effects: "Headache, B12 deficiency, bone fracture risk", interactions: "Clopidogrel, Methotrexate" },
+      { id: 27, brand_name: "Lantus", generic_name: "Insulin glargine", indications: "Type 1/2 diabetes.", dosage: "0.2–0.4 units/kg/day", side_effects: "Hypoglycemia, weight gain, lipodystrophy", interactions: "Beta-blockers, Alcohol" },
+      { id: 28, brand_name: "Xanax", generic_name: "Alprazolam", indications: "Anxiety, panic disorder.", dosage: "0.25–4 mg daily (divided)", side_effects: "Sedation, dependence, withdrawal", interactions: "Opioids, Alcohol" },
+      { id: 29, brand_name: "Metformin", generic_name: "Metformin", indications: "Type 2 diabetes.", dosage: "500–2,000 mg daily (divided)", side_effects: "Diarrhea, lactic acidosis (rare)", interactions: "Contrast dye, Alcohol" },
+      { id: 30, brand_name: "Prozac", generic_name: "Fluoxetine", indications: "Depression, bulimia, OCD.", dosage: "20–80 mg once daily", side_effects: "Anxiety, insomnia, QT prolongation", interactions: "MAOIs, Pimozide, Tamoxifen" },
+      { id: 31, brand_name: "Lasix", generic_name: "Furosemide", indications: "Edema, hypertension.", dosage: "20–80 mg daily", side_effects: "Dehydration, hypokalemia, ototoxicity", interactions: "Digoxin, NSAIDs" },
+      { id: 32, brand_name: "Neurontin", generic_name: "Gabapentin", indications: "Neuropathic pain, seizures.", dosage: "300–1,800 mg daily (divided)", side_effects: "Dizziness, weight gain, suicidal thoughts", interactions: "Opioids, Alcohol" },
+      { id: 34, brand_name: "Cozaar", generic_name: "Losartan", indications: "Hypertension, diabetic nephropathy.", dosage: "25–100 mg once daily", side_effects: "Hyperkalemia, dizziness, cough (rare)", interactions: "Potassium supplements, NSAIDs" },
+      { id: 35, brand_name: "Prednisone", generic_name: "Prednisone", indications: "Inflammation, autoimmune conditions.", dosage: "5–60 mg daily (tapered)", side_effects: "Weight gain, osteoporosis, adrenal suppression", interactions: "NSAIDs, Live vaccines" },
+      { id: 36, brand_name: "Amoxil", generic_name: "Amoxicillin", indications: "Bacterial infections.", dosage: "250–500 mg every 8 hours", side_effects: "Diarrhea, rash, anaphylaxis", interactions: "Probenecid, Methotrexate" },
+      { id: 37, brand_name: "Cymbalta", generic_name: "Duloxetine", indications: "Depression, neuropathic pain.", dosage: "30–60 mg once daily", side_effects: "Nausea, liver toxicity, sweating", interactions: "MAOIs, Anticoagulants" },
+      { id: 38, brand_name: "Zocor", generic_name: "Simvastatin", indications: "High cholesterol.", dosage: "5–40 mg once nightly", side_effects: "Myopathy, liver dysfunction", interactions: "Grapefruit juice, Amiodarone" },
+      { id: 39, brand_name: "Plavix", generic_name: "Clopidogrel", indications: "Post-stent, stroke prevention.", dosage: "75 mg once daily", side_effects: "Bleeding, rash, thrombocytopenia", interactions: "PPIs, NSAIDs" },
+      { id: 40, brand_name: "Lyrica", generic_name: "Pregabalin", indications: "Neuropathic pain, fibromyalgia.", dosage: "75–300 mg twice daily", side_effects: "Drowsiness, weight gain, edema", interactions: "Alcohol, Opioids" },
+      { id: 41, brand_name: "Celebrex", generic_name: "Celecoxib", indications: "Arthritis, pain.", dosage: "100–200 mg twice daily", side_effects: "GI ulcers, cardiovascular risk", interactions: "Anticoagulants, SSRIs" },
+      { id: 42, brand_name: "Ambien", generic_name: "Zolpidem", indications: "Insomnia.", dosage: "5–10 mg at bedtime", side_effects: "Drowsiness, dependence, sleepwalking", interactions: "Alcohol, CNS depressants" },
+      { id: 44, brand_name: "Eliquis", generic_name: "Apixaban", indications: "Stroke prevention (atrial fibrillation).", dosage: "5 mg twice daily", side_effects: "Bleeding, anemia", interactions: "Anticoagulants, NSAIDs" },
+      { id: 45, brand_name: "Tylenol", generic_name: "Paracetamol (Acetaminophen)", indications: "Mild to moderate pain, fever.", dosage: "500–1,000 mg every 4–6 hours (max 4,000 mg/day)", side_effects: "Liver toxicity (overdose), rash", interactions: "Alcohol, Warfarin" },
+      { id: 46, brand_name: "Amoxicillin", generic_name: "Amoxicillin", indications: "Bacterial infections (e.g., sinusitis, pneumonia).", dosage: "250–875 mg every 8–12 hours", side_effects: "Diarrhea, allergic reactions, yeast infections", interactions: "Probenecid, Methotrexate" }
+    ];
+
+    function DrugVerifier() {
+      const [searchTerm, setSearchTerm] = React.useState('');
+      const [drugs, setDrugs] = React.useState([]);
+      const [selectedDrug, setSelectedDrug] = React.useState(null);
+      const [dosage, setDosage] = React.useState('');
+      const [unit, setUnit] = React.useState('');
+      const [verificationResult, setVerificationResult] = React.useState(null);
+
+      const handleSearch = () => {
+        console.log("Searching for:", searchTerm);
+        const trimmedSearch = searchTerm.trim().toLowerCase();
+        const filteredDrugs = sampleDrugs.filter(drug =>
+          drug.brand_name.toLowerCase().includes(trimmedSearch) ||
+          drug.generic_name.toLowerCase().includes(trimmedSearch)
+        );
+        console.log("Filtered drugs:", filteredDrugs);
+        setDrugs(filteredDrugs);
+        setSelectedDrug(null);
+        setDosage('');
+        setUnit('');
+        setVerificationResult(null);
+
+        if (filteredDrugs.length === 0 && trimmedSearch) {
+          setVerificationResult({ correct: false, message: `Drug "${searchTerm}" not found in database.`, type: 'not-found' });
+        }
+      };
+
+      const handleKeyPress = (e) => {
+        if (e.key === 'Enter') {
+          handleSearch();
+        }
+      };
+
+      const handleVerify = () => {
+        console.log("Verifying:", { selectedDrug, dosage, unit });
+        if (!selectedDrug) {
+          setVerificationResult({ correct: false, message: "Please select a drug to verify.", type: 'error' });
+          return;
+        }
+
+        const correctDosage = selectedDrug.dosage;
+        const inputDosage = dosage.trim() + (unit ? ` ${unit.trim()}` : '');
+
+        const dosageMatch = (input, correct) => {
+          // Exact match (case-insensitive)
+          if (input.toLowerCase() === correct.toLowerCase()) return true;
+
+          // Handle range dosages (e.g., "10-80 mg once daily" or "0.2–0.4 units/kg/day")
+          const rangeMatch = correct.match(/^(\d+(?:\.\d+)?)\s*[-–]\s*(\d+(?:\.\d+)?)\s*(mg|mcg|units\/kg\/day|puffs|tablets|inhalation)/);
+          if (rangeMatch) {
+            const [_, min, max, unitType] = rangeMatch;
+            const inputMatch = input.match(/^(\d+(?:\.\d+)?)\s*(mg|mcg|units\/kg\/day|puffs|tablets|inhalation)/);
+            if (inputMatch && inputMatch[2].toLowerCase() === unitType.toLowerCase()) {
+              const inputValue = parseFloat(inputMatch[1]);
+              const minValue = parseFloat(min);
+              const maxValue = parseFloat(max);
+              return inputValue >= minValue && inputValue <= maxValue;
+            }
+          }
+
+          return false; // Non-matching dosages are incorrect
+        };
+
+        if (dosageMatch(inputDosage, correctDosage)) {
+          setVerificationResult({ correct: true, message: `Drug "${selectedDrug.brand_name}" and dosage are correct!`, type: 'success' });
+        } else {
+          setVerificationResult({ correct: false, message: `Incorrect dosage for "${selectedDrug.brand_name}". Correct dosage is ${correctDosage}.`, type: 'error' });
+        }
+      };
+
+      return (
+        <div className="max-w-2xl mx-auto bg-white p-6 rounded-lg shadow-md">
+          <h1 className="text-2xl font-bold text-center mb-4">Drug Verifier</h1>
+
+          {/* Search Section */}
+          <div className="mb-4">
+            <label className="block text-gray-700 font-semibold mb-2">Search Drug</label>
+            <div className="flex gap-2">
+              <input
+                type="text"
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                onKeyPress={handleKeyPress}
+                placeholder="Enter drug name (e.g., Lipitor or Atorvastatin)"
+                className="w-full p-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+              />
+              <button
+                onClick={handleSearch}
+                className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
+              >
+                Search
+              </button>
+            </div>
+          </div>
+
+          {/* Drug Selection */}
+          {drugs.length > 0 && (
+            <div className="mb-4">
+              <label className="block text-gray-700 font-semibold mb-2">Select Drug</label>
+              <select
+                onChange={(e) => {
+                  const drug = drugs.find(d => d.id === Number(e.target.value));
+                  console.log("Selected drug:", drug);
+                  setSelectedDrug(drug || null);
+                  setVerificationResult(null);
+                }}
+                className="w-full p-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+              >
+                <option value="">-- Select a drug --</option>
+                {drugs.map(drug => (
+                  <option key={drug.id} value={drug.id}>{drug.brand_name} ({drug.generic_name})</option>
+                ))}
+              </select>
+            </div>
+          )}
+
+          {/* Verification Result */}
+          {verificationResult && (
+            <div className={`p-4 rounded mb-4 ${
+              verificationResult.type === 'success' ? 'bg-green-100 text-green-800' :
+              verificationResult.type === 'not-found' ? 'bg-yellow-100 text-yellow-800' :
+              'bg-red-100 text-red-800'
+            }`}>
+              {verificationResult.message}
+            </div>
+          )}
+
+          {/* Dosage Input */}
+          {selectedDrug && (
+            <div className="mb-4">
+              <label className="block text-gray-700 font-semibold mb-2">Enter Dosage</label>
+              <div className="flex gap-2">
+                <input
+                  type="text"
+                  value={dosage}
+                  onChange={(e) => setDosage(e.target.value)}
+                  placeholder="Dosage (e.g., 10 mg or 2 puffs)"
+                  className="w-1/2 p-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+                />
+                <input
+                  type="text"
+                  value={unit}
+                  onChange={(e) => setUnit(e.target.value)}
+                  placeholder="Unit (e.g., mg, puffs)"
+                  className="w-1/2 p-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+                />
+                <button
+                  onClick={handleVerify}
+                  className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600"
+                >
+                  Verify
+                </button>
+              </div>
+            </div>
+          )}
+
+          {/* Drug Information */}
+          {selectedDrug && (
+            <div className="border-t pt-4">
+              <h2 className="text-xl font-semibold">{selectedDrug.brand_name}</h2>
+              <p><strong>Generic Name:</strong> {selectedDrug.generic_name}</p>
+              <p><strong>Indications:</strong> {selectedDrug.indications}</p>
+              <p><strong>Side Effects:</strong> {selectedDrug.side_effects}</p>
+              <p><strong>Interactions:</strong> {selectedDrug.interactions}</p>
+            </div>
+          )}
+        </div>
+      );
+    }
+
+    const root = ReactDOM.createRoot(document.getElementById('root'));
+    root.render(<DrugVerifier />);
+  </script>
+</body>
+</html>
